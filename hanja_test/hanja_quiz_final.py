@@ -21,7 +21,7 @@ def load_questions_from_csv(file_path):
     return questions, sorted(all_kanji)  # 고유 한자 정렬 후 반환
 
 # 파일 경로
-csv_file_path = "hanja_data.csv"
+csv_file_path = "11.28_hanja_dataset.csv"
 questions, all_kanji = load_questions_from_csv(csv_file_path)
 
 # 파이게임 초기화
@@ -51,6 +51,7 @@ def load_new_question(mode="all", num_questions=20):
     else:  # 모든 한자 외우기 모드
         selected_questions = random.sample(questions, len(questions))  # 모든 문제를 랜덤으로 정렬
     return selected_questions
+
 
 # 게임 데이터 초기화 함수
 def reset_game():
@@ -166,10 +167,19 @@ while running:
             x = x_start + (i % columns) * (kanji_button_width + padding)
             y = kanji_start_y + (i // columns) * (kanji_button_height + padding)
             button_position = (x, y, kanji_button_width, kanji_button_height)
-            pygame.draw.rect(screen, gray, button_position)
+            
+            # 배경 색상 선택 (정답일 경우 녹색 표시)
+            background_color = green if choice in user_answer else gray
+
+            
+            # 버튼 그리기
+            pygame.draw.rect(screen, background_color, button_position)
             button_text = small_font.render(choice, True, black)
             screen.blit(button_text, (x + 10, y + 10))
+            
+            # 버튼 데이터 저장 (위치, 문자, 상태)
             buttons.append((button_position, choice))
+
 
         # 정답 빈칸 및 히라가나 출력
         for i, char in enumerate(display_text):
@@ -232,7 +242,12 @@ while running:
                     show_feedback_timer = pygame.time.get_ticks()
                     show_feedback = True
 
-                # 보기 및 정답 처리
+                    # 정답 한자들을 user_answer에 추가하여 배경색을 녹색으로
+                    for kanji in correct_kanji:
+                        if kanji not in user_answer:
+                            user_answer.append(kanji)  # 정답 리스트에 추가
+
+
                 for button in buttons:
                     button_position, value = button
                     if (
@@ -252,10 +267,13 @@ while running:
                                 show_feedback_timer = pygame.time.get_ticks()
                                 show_feedback = True
                         else:
+                            # 틀린 경우 처리
                             feedback = "틀렸습니다"
                             show_feedback_timer = pygame.time.get_ticks()
                             show_feedback = True
-                            mistake_made = True  # 틀린 한자를 클릭했음을 표시
+
+                        
+
     pygame.display.flip()
 
 pygame.quit()
