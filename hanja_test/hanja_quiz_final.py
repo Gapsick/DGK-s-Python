@@ -262,7 +262,7 @@ while running:
                                     user_answer[i] = value
                                     break
                             # 정답 확인
-                            if "".join(user_answer) == "".join(correct_kanji):  # 한자만 비교
+                            if "".join(user_answer) == "".join(correct_kanji):
                                 feedback = "정답입니다!"
                                 show_feedback_timer = pygame.time.get_ticks()
                                 show_feedback = True
